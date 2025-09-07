@@ -1,0 +1,6 @@
+flask
+pdfplumber
+google-generativeai
+faiss-cpu
+numpy
+python-dotenv
