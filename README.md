@@ -1,6 +1,3 @@
-Perfect! Here’s the full **README.md** version for your Multi-PDF Q\&A app, ready to be placed in your repo:
-
-```markdown
 # Multi-PDF Q&A App
 
 A **local PDF Question-Answering app** that supports **multiple PDFs separately**. Users can upload PDFs, query specific PDFs, and compare answers across documents. Backend uses **FAISS** and **sentence-transformers** for embedding and retrieval. Optionally integrates with the **Gemini API** for LLM-based answers.  
