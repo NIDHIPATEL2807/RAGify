@@ -1,18 +1,23 @@
+Perfect! Here’s the full **README.md** version for your Multi-PDF Q\&A app, ready to be placed in your repo:
 
+```markdown
 # Multi-PDF Q&A App
 
-A local PDF Question-Answering app that supports **multiple PDFs** separately. Users can upload PDFs, query specific PDFs, and compare answers across documents. Backend uses **FAISS** and **sentence-transformers** for embedding and retrieval.  
+A **local PDF Question-Answering app** that supports **multiple PDFs separately**. Users can upload PDFs, query specific PDFs, and compare answers across documents. Backend uses **FAISS** and **sentence-transformers** for embedding and retrieval. Optionally integrates with the **Gemini API** for LLM-based answers.  
 
 ---
 
 ## Features ✅
 
-- Upload multiple PDFs  
-- Query each PDF independently  
-- Store separate FAISS indexes per PDF  
-- Compare answers across PDFs (optional)  
-- Fully local (free-tier) with **Gemini API** support  
-- Simple Next.js frontend for file upload and Q&A  
+| Feature | Where it lives | Purpose |
+|---------|----------------|---------|
+| Top-k retrieval | `/ask` route | Only send the most relevant chunks to Gemini → faster + cheaper |
+| In-memory caching | `/ask` route | Avoid repeated LLM calls for the same question |
+| Persistent FAISS index | `/upload` + server init | Avoid reprocessing PDFs after restart |
+| Saved indexes + documents | `indexes/` folder | Loads from disk on server start or request if not in memory |
+| Top-k retrieval | `/ask` route | Only retrieves the most relevant 3 chunks (top_k) |
+| In-memory caching | Backend `answer_cache` | Stores previous answers keyed by `(pdf_id, question)` |
+| Automatic loading of persisted PDFs | `/list_pdfs` or `/ask` | Ensures PDFs are ready without re-uploading |
 
 ---
 
@@ -20,14 +25,16 @@ A local PDF Question-Answering app that supports **multiple PDFs** separately. U
 
 ```
 
-server/
-├── app.py          # Flask backend
-├── .env            # Environment variables (Gemini API key)
-├── requirements.txt
-client/
-├── package.json
-├── pages/          # Next.js pages
-└── components/     # UI components
+project-root/
+├── server/
+│   ├── app.py          # Flask backend
+│   ├── .env            # Environment variables (Gemini API key)
+│   └── requirements.txt
+├── client/
+│   ├── package.json
+│   ├── pages/          # Next.js pages
+│   └── components/     # UI components
+└── indexes/            # Persistent FAISS indexes and document storage
 
 ````
 
@@ -89,7 +96,7 @@ npm install
 npm run dev
 ```
 
-* Frontend will run at: [http://localhost:3000](http://localhost:3000)
+*Frontend will run at: [http://localhost:3000](http://localhost:3000)*
 
 ---
 
@@ -136,10 +143,10 @@ console.log(answer);
 
 ---
 
-## Backend Design
+## Backend Design (Simplified)
 
 ```python
-# app.py (simplified)
+# app.py
 documents_dict = {}  # pdf_id -> list of chunks
 index_dict = {}      # pdf_id -> FAISS index
 
@@ -187,7 +194,5 @@ def list_pdfs():
 * Save session to disk for persistence
 * Display PDF metadata (filename, size, upload time)
 
-```
-
 ---
-```
+
